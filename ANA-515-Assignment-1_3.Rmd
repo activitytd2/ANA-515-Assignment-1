@@ -1,0 +1,55 @@
+---
+title: "ANA 515 Assignment 1"
+author: "Jeffin Wijaya"
+date: "13/03/2022"
+output:
+  word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+```{r installing libraries, eval = FALSE}
+install.packages('tidyverse')
+install.packages('knitr')
+install.packages('bslib')
+```
+
+```{r Reading the dataset from CSV, include = FALSE}
+library(tidyverse)
+url = 'https://raw.githubusercontent.com/fivethirtyeight/guns-data/master/full_data.csv'
+guns_death = read_csv(url, show_col_types = FALSE)
+```
+
+```{r Creating a subset from the original dataset, include = FALSE}
+library(tidyverse)
+youth = filter(guns_death, age <= 65)
+```
+
+```{r Get the summary of youth dataset, results = "hide"}
+youthSummary = summary(youth)
+```
+
+```{r Writing the inline code, echo = FALSE }
+rows = nrow(guns_death)
+rows2 = rows - nrow(youth)
+paste('We have data about', rows, 'individuals killed by guns. Only', rows2, 'are older than 65. The distribution of the remainder is shown below:')
+```
+
+
+# Guns death by age
+```{r youth-distribution, echo = FALSE}
+youth %>% ggplot(aes(x = age, colour = sex, fill = sex)) + geom_freqpoly(binwidth = 1,lwd = 1, linetype = 2 ) + 
+labs(title = 'Distribution of the Age by Sex in the Youth dataset', x = 'Age', y = 'Count') + theme(legend.position="bottom")
+```
+
+# Guns death by race
+```{r race-distribution, echo = FALSE}
+youth %>% ggplot(aes(fct_infreq(race) %>% fct_rev())) + geom_bar(color = 'black', fill = 2, width = 0.65) + coord_flip() + 
+labs(title = 'Distribution of the youth by race in the Youth dataset', x = 'Victim Race', y = 'Count')
+```
+
